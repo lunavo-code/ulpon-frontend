@@ -1,11 +1,11 @@
 <template>
   <div class="p-2 app-container demo-demo-page">
     <!-- 筛选组件（自定义展示字段与显示顺序） -->
-    <SearchPanel v-model:showSearch="showSearch" :fields="['value']" @search="handleSearch" />
+    <SearchPanel v-model:showSearch="showSearch" :fields="['value', 'testKey']" @search="handleSearch" />
 
     <!-- 列表及分页组件（自定义展示列与展示顺序） -->
-    <TablePanel ref="tablePanelRef" v-model:showSearch="showSearch" :visible-columns="['value']"
-      @add="handleEdit()" @edit="handleEdit" />
+    <!-- <TablePanel ref="tablePanelRef" v-model:showSearch="showSearch" @add="handleEdit()" @edit="handleEdit" :visible-columns="['id']"/> -->
+    <TablePanel ref="tablePanelRef" v-model:showSearch="showSearch" @add="handleEdit()" @edit="handleEdit" />
 
     <!-- 新增/修改表单弹窗 -->
     <DetailDialog ref="detailDialogRef" @success="handleSaveSuccess" />
