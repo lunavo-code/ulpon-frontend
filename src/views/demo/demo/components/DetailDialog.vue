@@ -27,7 +27,6 @@
 </template>
 
 <script setup name="DemoDetailDialog" lang="ts">
-import { ref, reactive, toRefs } from 'vue';
 import { ElForm } from 'element-plus';
 import { getDemo, addDemo, updateDemo } from '@/api/demo/demo';
 import { DemoForm } from '@/api/demo/demo/types';
