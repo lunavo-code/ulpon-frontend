@@ -13,12 +13,12 @@
         <el-form ref="queryFormRef" :model="queryParams" :inline="true" class="query-form">
           <el-form-item label="数据源" prop="dataName">
             <el-select v-model="queryParams.dataName" filterable clearable placeholder="请选择/输入数据源名称">
-              <el-option key="" label="全部" value="" />
+              <el-option key="" label="全部" value=""/>
               <el-option v-for="item in dataNameList" :key="item" :label="item" :value="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="表名称" prop="tableName">
-            <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable @keyup.enter="handleQuery" />
+            <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable @keyup.enter="handleQuery"/>
           </el-form-item>
           <el-form-item label="表描述" prop="tableComment">
             <el-input
@@ -81,6 +81,25 @@
             >
               删除
             </el-button>
+            <el-button
+              v-hasPermi="['tool:gen:remove']"
+              type="primary"
+              plain
+              icon="setting"
+              @click="handleSetProjectPath()"
+            >
+              设置目录
+            </el-button>
+            <el-button
+              v-hasPermi="['tool:gen:remove']"
+              type="primary"
+              plain
+              icon=""
+              :disabled="multiple"
+              @click="handleWriteToProject()"
+            >
+              写入
+            </el-button>
             <right-toolbar v-model:show-search="showSearch" :search="false" @query-table="getList"></right-toolbar>
           </div>
         </div>
@@ -99,12 +118,12 @@
             <span>{{ (queryParams.pageNum - 1) * queryParams.pageSize + scope.$index + 1 }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="数据源" align="center" prop="dataName" :show-overflow-tooltip="true" />
-        <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true" />
-        <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true" />
-        <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true" />
-        <el-table-column label="创建时间" align="center" prop="createTime" width="160" />
-        <el-table-column label="更新时间" align="center" prop="updateTime" width="160" />
+        <el-table-column label="数据源" align="center" prop="dataName" :show-overflow-tooltip="true"/>
+        <el-table-column label="表名称" align="center" prop="tableName" :show-overflow-tooltip="true"/>
+        <el-table-column label="表描述" align="center" prop="tableComment" :show-overflow-tooltip="true"/>
+        <el-table-column label="实体" align="center" prop="className" :show-overflow-tooltip="true"/>
+        <el-table-column label="创建时间" align="center" prop="createTime" width="160"/>
+        <el-table-column label="更新时间" align="center" prop="updateTime" width="160"/>
         <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-tooltip content="预览" placement="top">
@@ -182,24 +201,36 @@
           >
             &nbsp;复制
           </el-link>
-          <highlightjs :code="value" />
+          <highlightjs :code="value"/>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
-    <import-table ref="importRef" @ok="handleQuery" />
+
+    <el-dialog v-model="settingVisible" title="设置路径" width="80%">
+      <el-form>
+        <el-form-item>
+          <el-input></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input></el-input>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
+    <import-table ref="importRef" @ok="handleQuery"/>
   </div>
 </template>
 
 <script setup name="Gen" lang="ts">
-import { useRoute } from 'vue-router';
-import { delTable, getDataNames, listTable, previewTable, synchDb } from '@/api/tool/gen';
-import { TableQuery, TableVO } from '@/api/tool/gen/types';
-import { useLoading } from '@/hooks/async/useLoading';
-import { useDialogState } from '@/hooks/dialog/useDialogState';
-import { useDateRangeQuery } from '@/hooks/form/useDateRangeQuery';
-import { useSearchReset } from '@/hooks/form/useSearchReset';
-import { useSearchToggle } from '@/hooks/form/useSearchToggle';
-import { useTableSelection } from '@/hooks/table/useTableSelection';
+import {useRoute} from 'vue-router';
+import {delTable, getDataNames, listTable, previewTable, synchDb} from '@/api/tool/gen';
+import {TableQuery, TableVO} from '@/api/tool/gen/types';
+import {useLoading} from '@/hooks/async/useLoading';
+import {useDialogState} from '@/hooks/dialog/useDialogState';
+import {useDateRangeQuery} from '@/hooks/form/useDateRangeQuery';
+import {useSearchReset} from '@/hooks/form/useSearchReset';
+import {useSearchToggle} from '@/hooks/form/useSearchToggle';
+import {useTableSelection} from '@/hooks/table/useTableSelection';
 import download from '@/plugins/download';
 import modal from '@/plugins/modal';
 import router from '@/router';
@@ -208,10 +239,10 @@ import ImportTable from './importTable.vue';
 const route = useRoute();
 
 const tableList = ref<TableVO[]>([]);
-const { loading, withLoading } = useLoading(true);
-const { showSearch } = useSearchToggle();
+const {loading, withLoading} = useLoading(true);
+const {showSearch} = useSearchToggle();
 const total = ref(0);
-const { dateRange, applyDateRange, resetDateRange } = useDateRangeQuery();
+const {dateRange, applyDateRange, resetDateRange} = useDateRangeQuery();
 const uniqueId = ref('');
 const dataNameList = ref<Array<string>>([]);
 
@@ -240,7 +271,7 @@ const {
   multiple,
   handleSelectionChange: updateSelection
 } = useTableSelection<TableVO>(item => item.tableId);
-const { dialog, openDialog: openPreviewDialog } = useDialogState('代码预览');
+const {dialog, openDialog: openPreviewDialog} = useDialogState('代码预览');
 
 const handleTableSelectionChange = (selection: TableVO[]) => {
   selectedRows.value = selection;
@@ -288,7 +319,7 @@ const handleSynchDb = async (row: Partial<TableVO>) => {
 const openImportTable = () => {
   importRef.value?.show(queryParams.value.dataName);
 };
-const { resetQuery } = useSearchReset({
+const {resetQuery} = useSearchReset({
   queryFormRef,
   queryParams,
   pageNumKey: 'pageNum',
@@ -315,7 +346,7 @@ const handleEditTable = (row?: Partial<TableVO>) => {
   const tableId = row?.tableId || ids.value[0];
   router.push({
     path: '/tool/gen-edit/index/' + tableId,
-    query: { pageNum: queryParams.value.pageNum }
+    query: {pageNum: queryParams.value.pageNum}
   });
 };
 /** 删除按钮操作 */
@@ -326,6 +357,14 @@ const handleDelete = async (row?: Partial<TableVO>) => {
   await getList();
   modal.msgSuccess('删除成功');
 };
+
+const settingVisible = ref(false);
+const handleSetProjectPath = () => {
+  settingVisible.value = true;
+}
+const handleWriteToProject = () => {
+
+}
 
 onMounted(() => {
   const time = route.query.t;
@@ -347,6 +386,7 @@ onMounted(() => {
 
 .el-tab-pane {
   background-color: #282c34;
+
   .el-link {
     color: #fff;
   }
