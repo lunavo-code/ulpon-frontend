@@ -18,11 +18,14 @@
                         <el-input v-model="form.derivedQuestion" placeholder="请输入生成的文章标题/用户提问内容" />
                     </el-form-item>
                     <el-form-item label="状态(0待创作 1已创作 2已禁用)" prop="status">
-                        <el-switch
-                            v-model="form.status"
-                                active-value="0"
-                                inactive-value="1"
-                        />
+                        <el-select v-model="form.status" placeholder="请选择状态(0待创作 1已创作 2已禁用)">
+                            <el-option
+                                v-for="dict in geo_derived_status"
+                                :key="dict.value"
+                                :label="dict.label"
+                                    :value="dict.value"
+                            ></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item label="备注" prop="remark">
                         <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -52,7 +55,7 @@
 
     type ElFormInstance = InstanceType<typeof ElForm>;
 
-    const { geo_title_type, sys_normal_disable } = toRefs<any>(useDict('geo_title_type', 'sys_normal_disable'));
+    const { geo_title_type, geo_derived_status } = toRefs<any>(useDict('geo_title_type', 'geo_derived_status'));
 
     const emit = defineEmits(['success']);
 

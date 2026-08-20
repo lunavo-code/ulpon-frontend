@@ -21,7 +21,7 @@
                         </el-form-item>
                         <el-form-item label="状态(0待创作 1已创作 2已禁用)" prop="status">
                             <el-select v-model="queryParams.status" placeholder="请选择状态(0待创作 1已创作 2已禁用)" clearable>
-                                <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value"/>
+                                <el-option v-for="dict in geo_derived_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
                             </el-select>
                         </el-form-item>
                 <el-form-item>
@@ -41,7 +41,7 @@
 
     type ElFormInstance = InstanceType < typeof ElForm >;
 
-    const { geo_title_type, sys_normal_disable } = toRefs<any>(useDict('geo_title_type', 'sys_normal_disable'));
+    const { geo_title_type, geo_derived_status } = toRefs<any>(useDict('geo_title_type', 'geo_derived_status'));
 
     const props = defineProps({
         showSearch: {
