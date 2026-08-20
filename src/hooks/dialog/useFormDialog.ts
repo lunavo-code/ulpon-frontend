@@ -12,10 +12,18 @@ export function useFormDialog<T extends Record<string, any>>(options: UseFormDia
   const { form, formRef, initialFormData, initialTitle } = options;
   const { dialog, openDialog, closeDialog, setTitle } = useDialogState(initialTitle);
 
+  // const resetForm = () => {
+  //   form.value = { ...initialFormData };
+  //   formRef?.value?.resetFields();
+  //   formRef?.value?.clearValidate?.();
+  // };
+
   const resetForm = () => {
     form.value = { ...initialFormData };
-    formRef?.value?.resetFields();
-    formRef?.value?.clearValidate?.();
+    nextTick(() => {
+      formRef?.value?.resetFields();
+      formRef?.value?.clearValidate?.();
+    });
   };
 
   const openFormDialog = (title?: string) => {
