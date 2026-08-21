@@ -22,7 +22,7 @@
       background:
         linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)) padding-box,
         var(--app-surface-bg);
-
+      --el-form-label-width: 300px;
       .el-dialog__header {
         position: relative;
         padding: 18px 20px 14px;
@@ -106,4 +106,16 @@
   width: 100%;
   justify-content: flex-end;
   gap: 12px;
+}
+
+.dialog-grid-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // 自动分为两等列
+  column-gap: 16px; // 列间距
+  row-gap: 8px;     // 行间距
+
+  // 用于让某项独占一行（如备注）
+  .span-2 {
+    grid-column: span 2;
+  }
 }

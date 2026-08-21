@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { registerCurrentSnailUser } from '@/api/ai/agent';
+import { registerCurrentSnailUser } from '@/api/ai/agent_snail';
 import { getToken } from '@/utils/auth';
 
 defineOptions({ name: 'AiChatPage' });
