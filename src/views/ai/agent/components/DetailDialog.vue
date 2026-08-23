@@ -1,5 +1,13 @@
 <template>
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="1000px" append-to-body>
+    <el-steps :active="2" finish-status="success" align-center>
+      <el-step title="智能体描述" description="">
+
+      </el-step>
+      <el-step title="step b" description="">
+
+      </el-step>
+    </el-steps>
     <el-form class="dialog-grid-form" ref="agentFormRef" :model="form" :rules="rules" label-width="100px">
       <el-form-item class="span-2" label="智能体头像" prop="avatar">
         <image-upload v-model="form.avatar"/>
@@ -14,8 +22,8 @@
         <el-input v-model="form.systemPrompt" type="textarea" placeholder="请输入内容"/>
       </el-form-item>
       <el-form-item label="关联大模型配置 ID" prop="modelConfigId">
-        <ModelSelectPanel  v-model="form.modelConfigId" :displayColumns="['configName']"/>
-<!--        <el-input-number v-model="form.modelConfigId" controls-position="right"/>-->
+        <ModelSelectPanel v-model="form.modelConfigId" :displayColumns="['configName']"/>
+        <!--        <el-input-number v-model="form.modelConfigId" controls-position="right"/>-->
       </el-form-item>
       <el-form-item label="启用知识库" prop="kbEnabled">
         <el-switch
@@ -61,11 +69,21 @@
         </el-select>
       </el-form-item>
       <el-form-item label="启用状态" prop="status">
-        <el-switch
-          v-model="form.status"
-          :active-value="true"
-          :inactive-value="false"
-        />
+
+        <el-select v-model="form.status" placeholder="请选择关键词分类">
+          <el-option
+            v-for="dict in geo_keyword_type"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          ></el-option>
+        </el-select>
+
+<!--        <el-switch-->
+<!--          v-model="form.status"-->
+<!--          :active-value="true"-->
+<!--          :inactive-value="false"-->
+<!--        />-->
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
@@ -93,6 +111,10 @@ import {useFormDialog} from '@/hooks/dialog/useFormDialog';
 import modal from '@/plugins/modal';
 import {useDict} from '@/utils/dict';
 import ModelSelectPanel from "@/views/ai/modelConfig/components/SelectPanel.vue";
+import OnlineDevice from "@/views/system/user/profile/onlineDevice.vue";
+import ResetPwd from "@/views/system/user/profile/resetPwd.vue";
+import ThirdParty from "@/views/system/user/profile/thirdParty.vue";
+import UserInfo from "@/views/system/user/profile/userInfo.vue";
 
 type ElFormInstance = InstanceType<typeof ElForm>;
 

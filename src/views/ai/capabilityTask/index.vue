@@ -1,5 +1,5 @@
 <template>
-    <div class="p-2 app-container geo-keywordDerived-page">
+    <div class="p-2 app-container ai-capabilityTask-page">
         <!-- 筛选组件（自定义展示字段与显示顺序） -->
         <SearchPanel v-model:showSearch="showSearch" :fields="['value']" @search="handleSearch" />
 
@@ -12,7 +12,7 @@
     </div>
 </template>
 
-<script setup name="KeywordDerived" lang="ts">
+<script setup name="CapabilityTask" lang="ts">
     import { ref } from 'vue';
     import SearchPanel from './components/SearchPanel.vue';
     import TablePanel from './components/TablePanel.vue';

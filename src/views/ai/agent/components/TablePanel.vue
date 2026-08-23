@@ -30,8 +30,8 @@
           <image-preview :src="scope.row.avatarUrl" :width="50" :height="50"/>
         </template>
       </el-table-column>
-      <el-table-column label="智能体描述简介" align="center" prop="description"/>
-      <el-table-column label="系统提示词 (System Prompt)" align="center" prop="systemPrompt"/>
+      <el-table-column label="智能体描述简介" align="center" prop="description" show-overflow-tooltip/>
+      <el-table-column label="系统提示词 (System Prompt)" align="center" prop="systemPrompt" show-overflow-tooltip/>
       <el-table-column label="关联大模型配置 ID" align="center" prop="modelConfigId"/>
       <el-table-column label="启用知识库" align="center" prop="kbEnabled" width="120">
         <template #default="scope">
@@ -65,22 +65,25 @@
         </template>
       </el-table-column>
       <el-table-column label="记忆窗口长度" align="center" prop="memoryWindow"/>
-      <el-table-column label="问候语" align="center" prop="greeting"/>
-      <el-table-column label="预设问题" align="center" prop="presetQuestions"/>
+      <el-table-column label="问候语" align="center" prop="greeting" show-overflow-tooltip/>
+      <el-table-column label="预设问题" align="center" prop="presetQuestions" show-overflow-tooltip/>
       <el-table-column label="可见范围类型" align="center" prop="scopeType">
         <template #default="scope">
           <dict-tag :options="ai_agent_visibility" :value="scope.row.scopeType"/>
         </template>
       </el-table-column>
-      <el-table-column label="启用状态" align="center" prop="status" width="120">
+      <el-table-column label="状态" align="center" prop="status" width="120">
         <template #default="scope">
-          <el-switch
-            v-model="scope.row.status"
-            :active-value="true"
-            :inactive-value="false"
-            disabled
-          />
+          <dict-tag :options="ai_agent_status" :value="scope.row.status"/>
         </template>
+<!--        <template #default="scope">-->
+<!--          <el-switch-->
+<!--            v-model="scope.row.status"-->
+<!--            :active-value="true"-->
+<!--            :inactive-value="false"-->
+<!--            disabled-->
+<!--          />-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -107,6 +110,8 @@ import {useTableSelection} from '@/hooks/table/useTableSelection';
 import modal from '@/plugins/modal';
 import {download as requestDownload} from '@/utils/request';
 import {useDict} from '@/utils/dict';
+
+const { ai_agent_status } = toRefs<any>(useDict('ai_agent_status'));
 
 // 扩展字段属性接口
 interface TableFieldOption extends FieldOption {

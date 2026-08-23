@@ -15,7 +15,7 @@
              @change="handleChange"
   >
     <!-- 粘性表头：仅在有选项且开启了多列展示时呈现 -->
-    <div v-if="keywordOptions.length > 0 && displayColumns.length > 1" class="keyword-select-header">
+    <div v-if="capabilityTaskOptions.length > 0 && displayColumns.length > 1" class="capabilityTask-select-header">
       <span
         v-for="(col, index) in displayColumns"
         :key="col"
@@ -28,19 +28,19 @@
 
     <!-- 数据选项列表 -->
     <el-option
-      v-for="item in keywordOptions"
-      :key="item.keywordId"
-      :label="String(item[displayColumns[0] as keyof KeywordVO] ?? '')"
-      :value="item[valueKey as keyof KeywordVO]"
+      v-for="item in capabilityTaskOptions"
+      :key="item.taskId"
+      :label="String(item[displayColumns[0] as keyof CapabilityTaskVO] ?? '')"
+      :value="item[valueKey as keyof CapabilityTaskVO]"
     >
-      <div class="keyword-select-option-row">
+      <div class="capabilityTask-select-option-row">
         <span
           v-for="(col, index) in displayColumns"
           :key="col"
           class="option-cell"
           :style="{ flex: 1, marginRight: index < displayColumns.length - 1 ? '16px' : '0' }"
         >
-          {{ item[col as keyof KeywordVO] }}
+          {{ item[col as keyof CapabilityTaskVO] }}
         </span>
       </div>
     </el-option>
@@ -56,14 +56,14 @@
   </el-select>
 </template>
 
-<script setup name="KeywordSelect" lang="ts">
+<script setup name="CapabilityTaskSelect" lang="ts">
 import {PropType} from 'vue';
 import {useDebounceFn} from '@vueuse/core';
-import {listKeyword} from '@/api/geo/keyword';
-import {KeywordVO} from '@/api/geo/keyword/types';
+import {listCapabilityTask} from '@/api/ai/capabilityTask';
+import {CapabilityTaskVO} from '@/api/ai/capabilityTask/types';
 
 // 生成实例级唯一的 popper 样式类，防止多个下拉框事件冲突
-const uniqueClass = `keyword-select-popper-${Math.random().toString(36).substring(2, 9)}`;
+const uniqueClass = `capabilityTask-select-popper-${Math.random().toString(36).substring(2, 9)}`;
 
 // 双向绑定绑定值 (Vue 3.4+ defineModel)
 const model = defineModel<string | number | undefined>();
@@ -84,12 +84,12 @@ const props = defineProps({
   // 要展示的列属性列表（首个属性对应为输入框选中的回显文字）
   displayColumns: {
     type: Array as PropType<string[]>,
-    default: () => ['keywordId']
+    default: () => ['taskId']
   },
   // 选中后提交给 v-model 的字段属性
   valueKey: {
     type: String,
-    default: 'keywordId'
+    default: 'taskId'
   },
   // 是否展示文本模式，即输入框只读，且无下拉框
   textMode: {
@@ -101,7 +101,7 @@ const props = defineProps({
 const emit = defineEmits(['change']);
 
 // 运行中下拉框里展示的列表数据
-const keywordOptions = ref<KeywordVO[]>([]);
+const capabilityTaskOptions = ref<CapabilityTaskVO[]>([]);
 const loading = ref(false);
 const appendLoading = ref(false); // 局部滚动加载状态
 
@@ -113,30 +113,29 @@ const currentQuery = ref('');
 
 // ==================== 双轨制数据缓存 ====================
 // 默认数据轨（持久缓存所有已加载的默认列表数据）
-const defaultOptions = ref<KeywordVO[]>([]);
+const defaultOptions = ref<CapabilityTaskVO[]>([]);
 const defaultPageNum = ref(1);
 const defaultTotal = ref(0);
 // ========================================================
 
 // 选项列名称映射配置
 const columnLabelsMap: Record<string, string> = {
-  keywordId: '主键ID',
-  companyName: '公司/品牌名称',
-  keywordType: '关键词分类',
-  keyword: '核心关键词',
-  status: '状态(0启用 1停用)',
-  delFlag: '删除标志(0代表存在 2代表删除)',
+  taskId: '主键 ID',
+  capabilityId: '能力 ID',
+  userContent: '用户消息',
+  resContent: '反馈消息',
+  tokenCount: 'Token 消耗数',
+  delFlag: '删除标志（0代表存在 1代表删除）',
   createDept: '创建部门',
   createBy: '创建者',
   createTime: '创建时间',
   updateBy: '更新者',
   updateTime: '更新时间',
-  remark: '备注',
 };
 
 const getColumnLabel = (col: string) => columnLabelsMap[col] || col;
 
-const hasMore = computed(() => keywordOptions.value.length < total.value);
+const hasMore = computed(() => capabilityTaskOptions.value.length < total.value);
 
 /** 异步加载下拉框选项 */
 const loadOptions = async (query?: string, isAppend: boolean = false) => {
@@ -147,20 +146,20 @@ const loadOptions = async (query?: string, isAppend: boolean = false) => {
     if (!isAppend) {
       // 命中缓存：非滚动翻页时，若已有已加载的默认列表缓存，则同步瞬间恢复，不发接口
       if (defaultOptions.value.length > 0) {
-        keywordOptions.value = [...defaultOptions.value];
+        capabilityTaskOptions.value = [...defaultOptions.value];
         pageNum.value = defaultPageNum.value;
         total.value = defaultTotal.value;
         return;
       }
       pageNum.value = 1;
-      keywordOptions.value = [];
+      capabilityTaskOptions.value = [];
       loading.value = true;
     } else {
       appendLoading.value = true;
     }
 
     try {
-      const res = await listKeyword({
+      const res = await listCapabilityTask({
         pageNum: pageNum.value,
         pageSize: pageSize,
         params: undefined
@@ -176,7 +175,7 @@ const loadOptions = async (query?: string, isAppend: boolean = false) => {
       defaultTotal.value = res.data?.total || 0;
 
       // 同步当前视图变量
-      keywordOptions.value = [...defaultOptions.value];
+      capabilityTaskOptions.value = [...defaultOptions.value];
       total.value = defaultTotal.value;
 
       // 数据更新后绑定监听器，防止首次拉取时 DOM 节点不存在的竞态问题
@@ -194,23 +193,23 @@ const loadOptions = async (query?: string, isAppend: boolean = false) => {
     // ------------------ 搜索数据轨 (有搜索词) ------------------
     if (!isAppend) {
       pageNum.value = 1;
-      keywordOptions.value = [];
+      capabilityTaskOptions.value = [];
       loading.value = true;
     } else {
       appendLoading.value = true;
     }
 
     try {
-      const res = await listKeyword({
+      const res = await listCapabilityTask({
         pageNum: pageNum.value,
         pageSize: pageSize,
         params: query
       });
       const rows = res.data?.rows || [];
       if (isAppend) {
-        keywordOptions.value.push(...rows);
+        capabilityTaskOptions.value.push(...rows);
       } else {
-        keywordOptions.value = rows;
+        capabilityTaskOptions.value = rows;
       }
       total.value = res.data?.total || 0;
 
@@ -248,7 +247,7 @@ const handleScroll = (e: Event) => {
   // 基于 pageSize 计算动态翻页阈值系数（当前设定为 0.5，即可剩余一半数据时触发拉取）
   const thresholdOffset = Math.floor(pageSize * 0.5);
 
-  if (scrolledItems >= keywordOptions.value.length - thresholdOffset) {
+  if (scrolledItems >= capabilityTaskOptions.value.length - thresholdOffset) {
     loadMore();
   }
 };
@@ -276,7 +275,7 @@ const unbindScrollListener = () => {
 const handleVisibleChange = (visible: boolean) => {
   if (visible) {
     // 懒加载：只有在当前没有数据时才进行首次拉取
-    if (keywordOptions.value.length === 0) {
+    if (capabilityTaskOptions.value.length === 0) {
       loadOptions();
     }
     bindScrollListener();
@@ -308,7 +307,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* 粘性表头样式 */
-.keyword-select-header {
+.capabilityTask-select-header {
   position: sticky;
   top: 0;
   z-index: 10;
@@ -333,7 +332,7 @@ onBeforeUnmount(() => {
 }
 
 /* 选项行样式 */
-.keyword-select-option-row {
+.capabilityTask-select-option-row {
   display: flex;
   justify-content: space-between;
   align-items: center;

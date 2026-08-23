@@ -26,7 +26,7 @@
                     <el-table-column label="主键 ID" align="center" prop="messageId"/>
                     <el-table-column label="关联会话 ID" align="center" prop="sessionId"/>
                     <el-table-column label="角色类型" align="center" prop="role"/>
-                    <el-table-column label="消息内容" align="center" prop="content"/>
+                    <el-table-column label="消息内容" align="center" prop="content" show-overflow-tooltip/>
                     <el-table-column label="Token 消耗数" align="center" prop="tokenCount"/>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template #default="scope">

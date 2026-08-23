@@ -62,7 +62,7 @@ export interface AgentVO {
   /**
    * 启用状态（0正常 1停用）
    */
-  status: boolean;
+  status: string;
   /**
    * 备注
    */
@@ -129,7 +129,7 @@ export interface AgentForm extends BaseEntity {
   /**
    * 启用状态（0正常 1停用）
    */
-  status?: boolean;
+  status?: string;
   /**
    * 备注
    */
@@ -192,7 +192,7 @@ export interface AgentQuery extends PageQuery {
   /**
    * 启用状态（0正常 1停用）
    */
-  status?: boolean;
+  status?: string;
   /**
    * 日期范围参数
    */

@@ -15,7 +15,7 @@
         @change="handleChange"
     >
         <!-- 粘性表头：仅在有选项且开启了多列展示时呈现 -->
-        <div v-if="keywordDerivedOptions.length > 0 && displayColumns.length > 1" class="keywordDerived-select-header">
+        <div v-if="capabilityOptions.length > 0 && displayColumns.length > 1" class="capability-select-header">
       <span
           v-for="(col, index) in displayColumns"
           :key="col"
@@ -28,19 +28,19 @@
 
         <!-- 数据选项列表 -->
         <el-option
-            v-for="item in keywordDerivedOptions"
-            :key="item.derivedId"
-            :label="String(item[displayColumns[0] as keyof KeywordDerivedVO] ?? '')"
-            :value="item[valueKey as keyof KeywordDerivedVO]"
+            v-for="item in capabilityOptions"
+            :key="item.capabilityId"
+            :label="String(item[displayColumns[0] as keyof CapabilityVO] ?? '')"
+            :value="item[valueKey as keyof CapabilityVO]"
         >
-            <div class="keywordDerived-select-option-row">
+            <div class="capability-select-option-row">
         <span
             v-for="(col, index) in displayColumns"
             :key="col"
             class="option-cell"
             :style="{ flex: 1, marginRight: index < displayColumns.length - 1 ? '16px' : '0' }"
         >
-          {{ item[col as keyof KeywordDerivedVO] }}
+          {{ item[col as keyof CapabilityVO] }}
         </span>
             </div>
         </el-option>
@@ -56,14 +56,14 @@
     </el-select>
 </template>
 
-<script setup name="KeywordDerivedSelect" lang="ts">
+<script setup name="CapabilitySelect" lang="ts">
     import { PropType } from 'vue';
     import { useDebounceFn } from '@vueuse/core';
-    import { listKeywordDerived } from '@/api/geo/keywordDerived';
-    import { KeywordDerivedVO } from '@/api/geo/keywordDerived/types';
+    import { listCapability } from '@/api/ai/capability';
+    import { CapabilityVO } from '@/api/ai/capability/types';
 
     // 生成实例级唯一的 popper 样式类，防止多个下拉框事件冲突
-    const uniqueClass = `keywordDerived-select-popper-${Math.random().toString(36).substring(2, 9)}`;
+    const uniqueClass = `capability-select-popper-${Math.random().toString(36).substring(2, 9)}`;
 
     // 双向绑定绑定值 (Vue 3.4+ defineModel)
     const model = defineModel<string | number | undefined>();
@@ -84,12 +84,12 @@
         // 要展示的列属性列表（首个属性对应为输入框选中的回显文字）
         displayColumns: {
             type: Array as PropType<string[]>,
-            default: () => ['derivedId']
+            default: () => ['capabilityId']
         },
         // 选中后提交给 v-model 的字段属性
         valueKey: {
             type: String,
-            default: 'derivedId'
+            default: 'capabilityId'
         },
         // 是否展示文本模式，即输入框只读，且无下拉框
         textMode: {
@@ -101,7 +101,7 @@
     const emit = defineEmits(['change']);
 
     // 运行中下拉框里展示的列表数据
-    const keywordDerivedOptions = ref<KeywordDerivedVO[]>([]);
+    const capabilityOptions = ref<CapabilityVO[]>([]);
     const loading = ref(false);
     const appendLoading = ref(false); // 局部滚动加载状态
 
@@ -113,19 +113,23 @@
 
     // ==================== 双轨制数据缓存 ====================
     // 默认数据轨（持久缓存所有已加载的默认列表数据）
-    const defaultOptions = ref<KeywordDerivedVO[]>([]);
+    const defaultOptions = ref<CapabilityVO[]>([]);
     const defaultPageNum = ref(1);
     const defaultTotal = ref(0);
     // ========================================================
 
     // 选项列名称映射配置
     const columnLabelsMap: Record<string, string> = {
-            derivedId: '主键ID',
-            keywordId: '关联核心词ID',
-            titleType: '标题类型',
-            derivedQuestion: '生成的文章标题/用户提问内容',
-            status: '状态(0待创作 1已创作 2已禁用)',
-            delFlag: '删除标志(0代表存在 2代表删除)',
+            capabilityId: '主键 ID',
+            capabilityName: '能力名称',
+            description: '任务描述简介',
+            systemPrompt: '系统提示词 (System Prompt)',
+            modelConfigId: '关联大模型配置 ID',
+            scopeType: '可见范围类型（1个人 2组织 3公开）',
+            deptId: '所属部门 ID',
+            userId: '创建人用户 ID',
+            status: '启用状态（0正常 1停用）',
+            delFlag: '删除标志（0代表存在 1代表删除）',
             createDept: '创建部门',
             createBy: '创建者',
             createTime: '创建时间',
@@ -136,7 +140,7 @@
 
     const getColumnLabel = (col: string) => columnLabelsMap[col] || col;
 
-    const hasMore = computed(() => keywordDerivedOptions.value.length < total.value);
+    const hasMore = computed(() => capabilityOptions.value.length < total.value);
 
     /** 异步加载下拉框选项 */
     const loadOptions = async (query?: string, isAppend: boolean = false) => {
@@ -147,20 +151,20 @@
             if (!isAppend) {
                 // 命中缓存：非滚动翻页时，若已有已加载的默认列表缓存，则同步瞬间恢复，不发接口
                 if (defaultOptions.value.length > 0) {
-                    keywordDerivedOptions.value = [...defaultOptions.value];
+                    capabilityOptions.value = [...defaultOptions.value];
                     pageNum.value = defaultPageNum.value;
                     total.value = defaultTotal.value;
                     return;
                 }
                 pageNum.value = 1;
-                keywordDerivedOptions.value = [];
+                capabilityOptions.value = [];
                 loading.value = true;
             } else {
                 appendLoading.value = true;
             }
 
             try {
-                const res = await listKeywordDerived({
+                const res = await listCapability({
                     pageNum: pageNum.value,
                     pageSize: pageSize,
                     params: undefined
@@ -176,7 +180,7 @@
                 defaultTotal.value = res.data?.total || 0;
 
                 // 同步当前视图变量
-                keywordDerivedOptions.value = [...defaultOptions.value];
+                capabilityOptions.value = [...defaultOptions.value];
                 total.value = defaultTotal.value;
 
                 // 数据更新后绑定监听器，防止首次拉取时 DOM 节点不存在的竞态问题
@@ -194,23 +198,23 @@
             // ------------------ 搜索数据轨 (有搜索词) ------------------
             if (!isAppend) {
                 pageNum.value = 1;
-                keywordDerivedOptions.value = [];
+                capabilityOptions.value = [];
                 loading.value = true;
             } else {
                 appendLoading.value = true;
             }
 
             try {
-                const res = await listKeywordDerived({
+                const res = await listCapability({
                     pageNum: pageNum.value,
                     pageSize: pageSize,
                     params: query
                 });
                 const rows = res.data?.rows || [];
                 if (isAppend) {
-                    keywordDerivedOptions.value.push(...rows);
+                    capabilityOptions.value.push(...rows);
                 } else {
-                    keywordDerivedOptions.value = rows;
+                    capabilityOptions.value = rows;
                 }
                 total.value = res.data?.total || 0;
 
@@ -248,7 +252,7 @@
         // 基于 pageSize 计算动态翻页阈值系数（当前设定为 0.5，即可剩余一半数据时触发拉取）
         const thresholdOffset = Math.floor(pageSize * 0.5);
 
-        if (scrolledItems >= keywordDerivedOptions.value.length - thresholdOffset) {
+        if (scrolledItems >= capabilityOptions.value.length - thresholdOffset) {
             loadMore();
         }
     };
@@ -276,7 +280,7 @@
     const handleVisibleChange = (visible: boolean) => {
         if (visible) {
             // 懒加载：只有在当前没有数据时才进行首次拉取
-            if (keywordDerivedOptions.value.length === 0) {
+            if (capabilityOptions.value.length === 0) {
                 loadOptions();
             }
             bindScrollListener();
@@ -308,7 +312,7 @@
 
 <style scoped>
     /* 粘性表头样式 */
-    .keywordDerived-select-header {
+    .capability-select-header {
         position: sticky;
         top: 0;
         z-index: 10;
@@ -333,7 +337,7 @@
     }
 
     /* 选项行样式 */
-    .keywordDerived-select-option-row {
+    .capability-select-option-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
