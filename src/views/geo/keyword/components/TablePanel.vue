@@ -30,20 +30,22 @@
         <el-table v-loading="loading" border class="data-table" :data="keywordList"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55" align="center" />
-            <el-table-column label="主键ID" align="center" prop="keywordId" />
-            <el-table-column label="公司/品牌名称" align="center" prop="companyName" />
-            <el-table-column label="关键词分类" align="center" prop="keywordType">
-                <template #default="scope">
-                    <dict-tag :options="geo_keyword_type" :value="scope.row.keywordType" />
-                </template>
-            </el-table-column>
-            <el-table-column label="核心关键词" align="center" prop="keyword" />
-            <el-table-column label="状态(0启用 1停用)" align="center" prop="status" width="120">
-                <template #default="scope">
-                    <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" disabled />
-                </template>
-            </el-table-column>
-            <el-table-column label="备注" align="center" prop="remark" />
+            <template v-for="col in columns" :key="col.prop">
+                <!-- 关键词分类 -->
+                <el-table-column v-if="col.visible && col.prop === 'keywordType'" :label="col.label" align="center" :prop="col.prop">
+                    <template #default="scope">
+                        <dict-tag :options="geo_keyword_type" :value="scope.row.keywordType" />
+                    </template>
+                </el-table-column>
+                <!-- 状态 -->
+                <el-table-column v-else-if="col.visible && col.prop === 'status'" :label="col.label" align="center" :prop="col.prop" width="120">
+                    <template #default="scope">
+                        <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" disabled />
+                    </template>
+                </el-table-column>
+                <!-- 其他普通列 -->
+                <el-table-column v-else-if="col.visible" :label="col.label" align="center" :prop="col.prop" />
+            </template>
             <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                 <template #default="scope">
                     <el-tooltip content="修改" placement="top">
