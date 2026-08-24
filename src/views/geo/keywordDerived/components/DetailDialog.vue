@@ -1,7 +1,7 @@
 <template>
   <el-dialog v-model="dialog.visible" :title="dialog.title" width="500px" append-to-body>
     <el-form ref="keywordDerivedFormRef" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="关联核心词ID" prop="keywordId">
+      <el-form-item label="关键词" prop="keywordId">
         <SelectPanel v-model="form.keywordId" :displayColumns="['keyword']"/>
       </el-form-item>
       <el-form-item label="标题类型" prop="titleType">

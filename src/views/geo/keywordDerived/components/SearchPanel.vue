@@ -9,7 +9,8 @@
             <el-form ref="queryFormRef" :model="queryParams" :inline="true" class="query-form">
 
                         <el-form-item label="关联核心词ID" prop="keywordId">
-                            <el-input-number v-model="queryParams.keywordId" controls-position="right"/>
+                            <select-panel v-model="queryParams.keywordId" :displayColumns="['keyword']"/>
+                            <!-- <el-input-number v-model="queryParams.keywordId" controls-position="right"/> -->
                         </el-form-item>
                         <el-form-item label="标题类型" prop="titleType">
                             <el-select v-model="queryParams.titleType" placeholder="请选择标题类型" clearable>
@@ -38,6 +39,7 @@
     import {KeywordDerivedQuery} from '@/api/geo/keywordDerived/types';
     import {useSearchReset} from '@/hooks/form/useSearchReset';
     import { useDict } from '@/utils/dict';
+import SelectPanel from '../../keyword/components/SelectPanel.vue';
 
     type ElFormInstance = InstanceType < typeof ElForm >;
 
@@ -102,6 +104,7 @@
 
     /** 搜索按钮操作 */
     const handleQuery = () => {
+        console.log('queryParams.value', queryParams.value);
         emit('search', {...queryParams.value});
     };
 

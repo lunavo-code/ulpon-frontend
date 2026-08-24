@@ -25,9 +25,9 @@
       </div>
     </template>
 
-    <el-table v-loading="loading" border class="data-table" :data="keywordDerivedList"
-              @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center"/>
+    <el-table v-loading="loading" border class="data-table" :data="keywordDerivedList" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" align="center" width="55"/>
+      <el-table-column label="序号" align="center" type="index" width="60"/>
       <el-table-column label="主键ID" align="center" prop="derivedId"/>
       <el-table-column label="关联核心词" align="center" prop="keyword"/>
       <el-table-column label="标题类型" align="center" prop="titleType">
@@ -165,7 +165,7 @@ const {ids, single, multiple, handleSelectionChange} = useTableSelection<Keyword
 /** 查询派生标题管理列表 */
 const getList = async () => {
   await withLoading(async () => {
-    let params = queryParams.value;
+    let params = queryParams;
     const res = await listKeywordDerived(params);
     keywordDerivedList.value = res.data?.rows || [];
     total.value = res.data?.total || 0;
