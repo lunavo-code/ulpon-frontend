@@ -13,17 +13,13 @@
                             <!-- <el-input-number v-model="queryParams.keywordId" controls-position="right"/> -->
                         </el-form-item>
                         <el-form-item label="标题类型" prop="titleType">
-                            <el-select v-model="queryParams.titleType" placeholder="请选择标题类型" clearable>
-                                <el-option v-for="dict in geo_title_type" :key="dict.value" :label="dict.label" :value="dict.value"/>
-                            </el-select>
+                            <dict-select v-model="queryParams.titleType" dict-type="geo_title_type" placeholder="请选择标题类型" clearable/>
                         </el-form-item>
                         <el-form-item label="生成的文章标题/用户提问内容" prop="derivedQuestion">
                             <el-input v-model="queryParams.derivedQuestion" placeholder="请输入生成的文章标题/用户提问内容" clearable @keyup.enter="handleQuery"/>
                         </el-form-item>
                         <el-form-item label="状态(0待创作 1已创作 2已禁用)" prop="status">
-                            <el-select v-model="queryParams.status" placeholder="请选择状态(0待创作 1已创作 2已禁用)" clearable>
-                                <el-option v-for="dict in geo_derived_status" :key="dict.value" :label="dict.label" :value="dict.value"/>
-                            </el-select>
+                            <dict-select v-model="queryParams.status" dict-type="geo_derived_status" placeholder="请选择状态" clearable/>
                         </el-form-item>
                 <el-form-item>
                     <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -38,12 +34,9 @@
     import {ElForm} from 'element-plus';
     import {KeywordDerivedQuery} from '@/api/geo/keywordDerived/types';
     import {useSearchReset} from '@/hooks/form/useSearchReset';
-    import { useDict } from '@/utils/dict';
-import SelectPanel from '../../keyword/components/SelectPanel.vue';
+    import SelectPanel from '../../keyword/components/SelectPanel.vue';
 
     type ElFormInstance = InstanceType < typeof ElForm >;
-
-    const { geo_title_type, geo_derived_status } = toRefs<any>(useDict('geo_title_type', 'geo_derived_status'));
 
     const props = defineProps({
         showSearch: {

@@ -5,27 +5,13 @@
         <SelectPanel v-model="form.keywordId" :displayColumns="['keyword']"/>
       </el-form-item>
       <el-form-item label="标题类型" prop="titleType">
-        <el-select v-model="form.titleType" placeholder="请选择标题类型">
-          <el-option
-            v-for="dict in geo_title_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          ></el-option>
-        </el-select>
+        <dict-select v-model="form.titleType" dict-type="geo_title_type" placeholder="请选择标题类型"/>
       </el-form-item>
       <el-form-item label="生成的文章标题/用户提问内容" prop="derivedQuestion">
         <el-input v-model="form.derivedQuestion" placeholder="请输入生成的文章标题/用户提问内容"/>
       </el-form-item>
       <el-form-item label="状态(0待创作 1已创作 2已禁用)" prop="status">
-        <el-select v-model="form.status" placeholder="请选择状态(0待创作 1已创作 2已禁用)">
-          <el-option
-            v-for="dict in geo_derived_status"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
-          ></el-option>
-        </el-select>
+        <dict-select v-model="form.status" dict-type="geo_derived_status" placeholder="请选择状态"/>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"/>
@@ -51,12 +37,9 @@ import {ElForm} from 'element-plus';
 import {KeywordDerivedForm} from '@/api/geo/keywordDerived/types';
 import {useFormDialog} from '@/hooks/dialog/useFormDialog';
 import modal from '@/plugins/modal';
-import {useDict} from '@/utils/dict';
 import SelectPanel from "@/views/geo/keyword/components/SelectPanel.vue";
 
 type ElFormInstance = InstanceType<typeof ElForm>;
-
-const {geo_title_type, geo_derived_status} = toRefs<any>(useDict('geo_title_type', 'geo_derived_status'));
 
 const emit = defineEmits(['success']);
 
@@ -68,7 +51,7 @@ const initFormData: KeywordDerivedForm = {
   keywordId: undefined,
   titleType: undefined,
   derivedQuestion: undefined,
-  status: undefined,
+  status: '1',
   remark: undefined,
 };
 

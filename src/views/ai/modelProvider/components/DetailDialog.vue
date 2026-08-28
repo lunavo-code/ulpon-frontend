@@ -11,11 +11,7 @@
                         <el-input v-model="form.defaultBaseUrl" placeholder="请输入默认 API 接口地址" />
                     </el-form-item>
                     <el-form-item label="启用状态" prop="status">
-                        <el-switch
-                            v-model="form.status"
-                                :active-value="true"
-                                :inactive-value="false"
-                        />
+                        <el-switch v-model="form.status"/>
                     </el-form-item>
                     <el-form-item label="备注" prop="remark">
                         <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
