@@ -64,6 +64,21 @@ declare global {
     elTagClass?: string;
   }
 
+  interface EnumInfo {
+    model: string;
+    key: string;
+    name: string;
+    desc: string;
+    values: EnumItem[];
+  }
+
+  interface EnumItem {
+    code: string;
+    label: string;
+    desc?: string;
+  }
+
+
   interface BaseEntity {
     createBy?: any;
     createDept?: any;

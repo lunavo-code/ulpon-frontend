@@ -65,6 +65,8 @@
 </template>
 
 <script setup name="Index" lang="ts">
+import { useEnum } from '@/utils/enums';
+
 const products = [
   {
     name: 'RuoYi-Vue-Plus',
@@ -106,6 +108,12 @@ const capabilityGroups = [
 const goTarget = (url: string) => {
   window.open(url, '__blank');
 };
+
+const { templateCategoryEnum } = toRefs<any>(useEnum('gen', 'TemplateCategoryEnum'));
+
+onMounted(() => {
+  console.log('TemplateCategoryEnum:', templateCategoryEnum?.value);
+});
 </script>
 
 <style lang="scss" scoped>
