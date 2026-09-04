@@ -111,6 +111,28 @@
               </el-select>
             </template>
           </el-table-column>
+          <el-table-column label="枚举类型" min-width="12%">
+            <template #default="scope">
+              <el-select
+                v-model="scope.row.enumType"
+                clearable
+                filterable
+                placeholder="请选择"
+                value-on-clear=""
+                :disabled="!supportsDictHtmlType(scope.row.htmlType)"
+              >
+                <el-option
+                  v-for="opt in enumOptions"
+                  :key="opt.enumType"
+                  :label="opt.enumName"
+                  :value="opt.enumType"
+                >
+                  <span style="float: left">{{ opt.enumType }}</span>
+                  <span style="float: right; color: #8492a6; font-size: 13px">{{ opt.enumName }}</span>
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane label="生成信息" name="genInfo">
@@ -136,12 +158,14 @@ import modal from '@/plugins/modal';
 import tab from '@/plugins/tab';
 import BasicInfoForm from './basicInfoForm.vue';
 import GenInfoForm from './genInfoForm.vue';
+import { enumCatalog } from '@/api/enums/index.js';
 
 const route = useRoute();
 const activeName = ref('columnInfo');
 const tableHeight = ref(document.documentElement.scrollHeight - 245 + 'px');
 const columns = ref<DbColumnVO[]>([]);
 const dictOptions = ref<DictTypeVO[]>([]);
+const enumOptions = ref<Record<string, string>>({});
 const info = ref<Partial<DbTableVO>>({});
 const DICT_HTML_TYPES = ['select', 'radio', 'checkbox', 'switch'];
 
@@ -229,5 +253,7 @@ onMounted(async () => {
   info.value.frontendType ||= 'vue';
   const response = await getDictOptionselect();
   dictOptions.value = response.data;
+  const enumResponse = await enumCatalog();
+  enumOptions.value = enumResponse.data;
 });
 </script>

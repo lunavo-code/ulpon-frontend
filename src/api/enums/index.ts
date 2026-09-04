@@ -1,39 +1,22 @@
 import type { AxiosPromise } from '@/utils/api-types';
-import type {EnumInfo} from '@/api/enums/types';
 import request from '@/utils/request';
 
-/**
- * 获取所有枚举
- * @returns 
- */
-export const allEnums = (): AxiosPromise<Record<string,EnumInfo[]>> => {
+export const enumCatalog = (): AxiosPromise<Record<string, string>> => {
     return request({
-        url: '/enum/all',
+        url: '/enum/catalog',
         method: 'get'
-    });
-}
-
-/**
- * 获取指定模块所有枚举
- * @param model 模块名
- * @returns 
- */
-export const listEnums = (model:string): AxiosPromise<EnumInfo[]> => {
-    return request({
-        url: `/enum/list/${model}`,
-        method: 'get'
-    });
+    })
 }
 
 /**
  * 获取枚举详情
  * @param model 模块 
- * @param key key
+ * @param enumType enumType
  * @returns 
  */
-export const enumInfo = (model:string, key:string): AxiosPromise<EnumInfo> => {
+export const enumInfo = (model: string, enumType: string): AxiosPromise<EnumItem[]> => {
     return request({
-        url: `/enum/info/${model}/${key}`,
+        url: `/enum/type/${model}/${enumType}`,
         method: 'get'
     });
 }

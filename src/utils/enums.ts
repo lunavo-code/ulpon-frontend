@@ -3,30 +3,33 @@ import { useEnumStore } from '@/store/modules/enum';
 
 const pendingRequests = new Map<string, Promise<EnumItem[]>>();
 
-export const useEnum = (model: string, ...keys: string[]): { [key: string]: EnumItem[] } => {
+export const useEnum = (modelName: string, ...args: string[]): { [key: string]: EnumItem[] } => {
   const res = reactive<{ [key: string]: EnumItem[] }>({});
 
-  keys.forEach(async key => {
-    res[key] = [];
-    const enums = useEnumStore().getEnum(model, key);
+  args.forEach(async enumType => {
+    res[enumType] = [];
+    const enums = useEnumStore().getEnum(enumType);
     if (enums) {
-      res[key] = enums;
+      res[enumType] = enums;
     } else {
-      const cacheKey = `${model}:${key}`;
-      if (!pendingRequests.has(cacheKey)) {
-        const request = enumInfo(model, key)
+      if (!pendingRequests.has(enumType)) {
+        const request = enumInfo(modelName, enumType)
           .then(resp => {
-            const data = resp.data?.values || [];
-            useEnumStore().setEnum(model, key, data);
+            const data = resp.data.map(
+              (p): EnumItem => ({
+                code: p.code,
+                label: p.label,
+                desc: p.desc
+              })
+            )
+            useEnumStore().setEnum(enumType, data);
             return data;
           })
-          .finally(() => pendingRequests.delete(cacheKey));
-        pendingRequests.set(cacheKey, request);
+          .finally(() => pendingRequests.delete(enumType));
+        pendingRequests.set(enumType, request);
       }
-      res[key] = await pendingRequests.get(cacheKey)!;
-      console.log(`Fetched enum for ${model}:${key}`, res[key]);
+      res[enumType] = await pendingRequests.get(enumType)!;
     }
-  });
-
+  })
   return res;
-};
+}

@@ -1,40 +1,44 @@
 import { defineStore } from 'pinia';
 
 export const useEnumStore = defineStore('enum', () => {
-    const enums = ref(new Map<string, Map<string, EnumItem[]>>());
+  const enums = ref<Map<string, EnumItem[]>>(new Map());
 
-    const getEnum = (_model: string, _key: string): EnumItem[] | null => {
-        if (!_model || !_key) {
-            return null;
-        }
-        const modelMap = enums.value.get(_model);
-        if (!modelMap) {
-            return null;
-        }
-        return modelMap.get(_key) || null;
+  /**
+   * 获取枚举
+   */
+  const getEnum = (_key: string): EnumItem[] | null => {
+    if (!_key) {
+      return null;
     }
+    return enums.value.get(_key) || null;
+  }
 
-    const setEnum = (_model: string, _key: string, _value: EnumItem[]): boolean => {
-        if (!_model || !_key) {
-            return false;
-        }
-        let modelMap = enums.value.get(_model);
-        if (!modelMap) {
-            modelMap = new Map<string, EnumItem[]>();
-            enums.value.set(_model, modelMap);
-        }
-        modelMap.set(_key, _value);
-        return true;
+  /**
+   * 设置枚举
+   */
+  const setEnum = (_key: string, _value: EnumItem[]) => {
+    if (!_key) {
+      return false;
     }
+    try {
+      enums.value.set(_key, _value);
+      return true;
+    } catch (e) {
+      console.error('Error in setEnum:', e);
+      return false;
+    }
+  };
 
-    const clearEnum = (): void => {
-        enums.value.clear();
-    }
+  /**
+   * 清空枚举
+   */
+  const cleanEnum = (): void => {
+    enums.value.clear();
+  }
 
-    return {
-        enums,
-        getEnum,
-        setEnum,
-        clearEnum
-    }
+  return {
+    getEnum,
+    setEnum,
+    cleanEnum
+  }
 })
