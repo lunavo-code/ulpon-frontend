@@ -1,19 +1,6 @@
 <template>
   <el-select v-bind="$attrs" v-model="selectedValue" :placeholder="placeholder">
-    <el-option
-      v-for="item in selectOptions"
-      :key="getItemValue(item)"
-      :label="getItemLabel(item)"
-      :value="getItemValue(item)"
-      :disabled="item.disabled"
-    >
-      <slot :item="item">
-        <div class="enum-option-item">
-          <span>{{ getItemLabel(item) }}</span>
-          <span v-if="showDesc && item.desc" class="enum-option-desc">{{ item.desc }}</span>
-        </div>
-      </slot>
-    </el-option>
+    <el-option v-for="item in selectOptions" :key="item.code" :label="item.label" :value="item.code"></el-option>
   </el-select>
 </template>
 
@@ -25,18 +12,12 @@ interface Props {
   modelValue: any;
   model?: string;
   enumType?: string;
-  options?: Array<EnumItem | any>;
+  options?: Array<EnumItem>;
   placeholder?: string;
-  showDesc?: boolean;
-  valueKey?: string;
-  labelKey?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   placeholder: '请选择',
-  showDesc: false,
-  valueKey: 'code',
-  labelKey: 'label'
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -56,33 +37,4 @@ const selectOptions = computed(() => {
   }
   return [];
 });
-
-const getItemValue = (item: any) => {
-  if (item[props.valueKey] !== undefined) {
-    return item[props.valueKey];
-  }
-  return item.value !== undefined ? item.value : item;
-};
-
-const getItemLabel = (item: any) => {
-  if (item[props.labelKey] !== undefined) {
-    return item[props.labelKey];
-  }
-  return item.label !== undefined ? item.label : item;
-};
 </script>
-
-<style scoped lang="scss">
-.enum-option-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-
-  .enum-option-desc {
-    color: var(--el-text-color-secondary);
-    font-size: 12px;
-    margin-left: 12px;
-  }
-}
-</style>

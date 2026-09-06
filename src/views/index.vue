@@ -204,7 +204,8 @@
                 <el-form-item label="本地静态枚举">
                   <enum-select
                     v-model="enumVal2"
-                    :options="categoryEnumOptions"
+                    model="gen"
+                    enum-type="TemplateCategoryEnum"
                     placeholder="请选择系统分类"
                     clearable
                     style="width: 100%"
@@ -252,7 +253,8 @@
             <el-form-item label="普通单选 (静态)">
               <enum-radio
                 v-model="enumRadioVal1"
-                :options="taskTypeEnumOptions"
+                model="gen"
+                enum-type="TemplateCategoryEnum"
               />
               <div class="value-tip">绑定值：<code>{{ enumRadioVal1 }}</code></div>
             </el-form-item>
@@ -260,7 +262,8 @@
             <el-form-item label="按钮外观 (静态)">
               <enum-radio
                 v-model="enumRadioVal2"
-                :options="categoryEnumOptions"
+                model="gen"
+                enum-type="TemplateCategoryEnum"
                 option-type="button"
               />
               <div class="value-tip">绑定值：<code>{{ enumRadioVal2 }}</code></div>
