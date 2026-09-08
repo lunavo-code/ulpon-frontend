@@ -23,7 +23,7 @@
         <el-input v-model="form.fileName" type="textarea" placeholder="请输入内容"/>
       </el-form-item>
       <el-form-item label="模板内容" prop="content">
-        <editor v-model="form.content" :min-height="192"/>
+        <code-editor v-model="form.content" :height="260" file-name="template.ftl" :show-toolbar="false" />
       </el-form-item>
       <el-form-item label="排序" prop="sort">
         <el-input-number v-model="form.sort" controls-position="right"/>

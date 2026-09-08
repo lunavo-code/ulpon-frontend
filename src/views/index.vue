@@ -1,5 +1,16 @@
 <template>
   <div class="dict-demo-container p-4">
+
+    <!-- <editor /> -->
+    <!-- @save="handleSave" -->
+    <!-- file-name="domain.java.ftl" -->
+    <code-editor
+    v-model="templateContent"
+    language="ftl"
+    height="500px"
+    readOnly
+    />
+
     <el-card shadow="never" class="mb-4 header-card">
       <template #header>
         <div class="card-title">
@@ -371,6 +382,17 @@
 <script setup name="Index" lang="ts">
 import { ref, onMounted } from 'vue';
 import { useEnum } from '@/utils/enums';
+
+const templateContent = ref(`
+<#-- FreeMarker 模板示例 -->
+<#list columns as column>
+    /** \${column.columnComment} */
+    <#if column.list>
+    @Excel(name = "\${column.columnComment}")
+    </#if>
+    private \${column.javaType} \${column.javaField};
+</#list>
+`);
 
 // 保持原有的 useEnum 逻辑
 const { templateCategoryEnum } = toRefs<any>(useEnum('gen', 'TemplateCategoryEnum'));

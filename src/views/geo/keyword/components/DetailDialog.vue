@@ -44,13 +44,13 @@ import {
   updateKeyword
 } from '@/api/geo/keyword';
 
-import {ElForm} from 'element-plus';
+// import {ElForm} from 'element-plus';
 import {KeywordForm} from '@/api/geo/keyword/types';
 import {useFormDialog} from '@/hooks/dialog/useFormDialog';
 import modal from '@/plugins/modal';
 import {useDict} from '@/utils/dict';
 
-type ElFormInstance = InstanceType<typeof ElForm>;
+// type ElFormInstance = InstanceType<typeof ElForm>;
 
 const {geo_keyword_type, sys_normal_disable} = toRefs<any>(useDict('geo_keyword_type', 'sys_normal_disable'));
 

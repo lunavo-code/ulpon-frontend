@@ -88,6 +88,19 @@ export const constantRoutes: RouteRecordRaw[] = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/tool/gen-editor',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: 'index/:id(\\d+)?',
+        component: () => import('@/views/tool/gen/editor/index.vue'),
+        name: 'GenTemplateEditor',
+        meta: { title: '模板在线设计', activeMenu: '/tool/gen/template' }
+      }
+    ]
   }
 ];
 

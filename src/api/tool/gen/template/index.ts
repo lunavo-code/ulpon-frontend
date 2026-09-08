@@ -63,3 +63,23 @@ export const delTemplate = (id: string | number | Array<string | number>) => {
     method: 'delete'
   });
 };
+
+export interface RenderTemplatePayload {
+  content: string;
+  tableId?: string | number;
+  dataName?: string;
+  params?: Record<string, any>;
+}
+
+/**
+ * 在线解析/渲染 FreeMarker 模板
+ * @param data 模板内容、测试表ID及附加参数
+ */
+export const renderTemplate = (data: RenderTemplatePayload): AxiosPromise<string> => {
+  return request({
+    url: '/gen/template/render',
+    method: 'post',
+    data: data
+  });
+};
+

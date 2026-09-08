@@ -28,11 +28,14 @@
                         <el-table-column v-if="col.visible && col.prop === 'type'" label="模板类型: backend,frontend-vue,frontend-react,sql" align="center" prop="type"/>
                         <el-table-column v-if="col.visible && col.prop === 'path'" label="生成路径" align="center" prop="path"/>
                         <el-table-column v-if="col.visible && col.prop === 'name'" label="模板名称" align="center" prop="name"/>
-                        <el-table-column v-if="col.visible && col.prop === 'content'" label="模板内容" align="center" prop="content"/>
+                        <!-- <el-table-column v-if="col.visible && col.prop === 'content'" label="模板内容" align="center" prop="content"/> -->
                         <el-table-column v-if="col.visible && col.prop === 'sort'" label="排序" align="center" prop="sort"/>
             </template>
-            <el-table-column  label="操作" align="center" class-name="small-padding fixed-width">
+            <el-table-column  label="操作" align="center" width="160" class-name="small-padding fixed-width">
                 <template #default="scope">
+                    <el-tooltip content="在线设计/预览" placement="top">
+                        <el-button link type="primary" icon="VideoPlay" @click="handleDesign(scope.row)" v-hasPermi="['gen:template:edit']"></el-button>
+                    </el-tooltip>
                     <el-tooltip content="修改" placement="top">
                         <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['gen:template:edit']"></el-button>
                     </el-tooltip>
@@ -48,6 +51,7 @@
 </template>
 
 <script setup name="TemplateTablePanel" lang="ts">
+    import {useRouter} from 'vue-router';
     import {listTemplate, delTemplate} from '@/api/tool/gen/template';
     import {TemplateVO, TemplateQuery} from '@/api/tool/gen/template/types';
     import {useLoading} from '@/hooks/async/useLoading';
@@ -180,6 +184,15 @@
 
     const handleAdd = () => {
         emit('add');
+    };
+
+    const router = useRouter();
+
+    const handleDesign = (row: any) => {
+        const id = row?.id || ids.value[0];
+        router.push({
+            path: id ? `/tool/gen-editor/index/${id}` : '/tool/gen-editor/index'
+        });
     };
 
     const handleUpdate = (row?: any) => {
